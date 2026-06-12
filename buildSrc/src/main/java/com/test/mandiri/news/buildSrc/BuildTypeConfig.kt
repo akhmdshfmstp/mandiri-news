@@ -3,25 +3,6 @@ package com.test.mandiri.news.buildSrc
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 
-fun LibraryExtension.applyNonMinifyBuildTypes() {
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-        }
-        debug {
-            isMinifyEnabled = false
-        }
-        create("sanity") {
-            initWith(getByName("release"))
-            matchingFallbacks += "debug"
-        }
-        create("demo") {
-            initWith(getByName("debug"))
-            matchingFallbacks += "debug"
-        }
-    }
-}
-
 fun ApplicationExtension.applyBuildTypes() {
     buildTypes {
         release {
