@@ -1,58 +1,101 @@
+import com.test.mandiri.news.buildSrc.AndroidConfig
+import com.test.mandiri.news.buildSrc.applyBuildTypes
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt.android)
 }
 
+apply(from = "$rootDir/library_dependencies.gradle.kts")
+
 android {
-    namespace = "com.example.kmp.myapplication"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
+    compileSdk = AndroidConfig.compileSdk
+    namespace = AndroidConfig.applicationId
+
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
         }
     }
 
     defaultConfig {
-        applicationId = "com.example.kmp.myapplication"
-        minSdk = 24
-        targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        applicationId = AndroidConfig.applicationId
+        minSdk = AndroidConfig.minSdkVersion
+        targetSdk = AndroidConfig.targetSdkVersion
+        versionCode = AndroidConfig.versionCode
+        versionName = AndroidConfig.versionName
+        multiDexEnabled = true
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = AndroidConfig.jUnitRunner
+        signingConfig = signingConfigs.getByName("debug")
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
+    applyBuildTypes()
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
     buildFeatures {
-        compose = true
+        buildConfig = true
+        viewBinding = true
+    }
+
+    lint {
+        disable += setOf("NullSafeMutableLiveData", "Instantiatable", "MissingTranslation", "InvalidPackage")
+        checkReleaseBuilds = false
+        abortOnError = false
+    }
+
+    packaging {
+        resources.excludes += setOf(
+            "META-INF/DEPENDENCIES",
+            "META-INF/LICENSE",
+            "META-INF/LICENSE.txt",
+            "META-INF/license.txt",
+            "META-INF/NOTICE",
+            "META-INF/NOTICE.txt",
+            "META-INF/notice.txt",
+            "META-INF/ASL2.0",
+            "META-INF/LGPL2.1",
+            "META-INF/AL2.0",
+            "META-INF/*.kotlin_module"
+        )
+    }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
     }
 }
 
+kapt {
+    useBuildCache = true
+}
+
 dependencies {
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+
+    implementation(project(":core:router"))
+    implementation(project(":core:network"))
+
+    implementation(project(":common-android"))
+
+    implementation(project(":domain:news"))
+
+    implementation(project(":data:news"))
+
+    implementation(project(":feature:news"))
 }
