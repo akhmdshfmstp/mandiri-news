@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.22.1)
+
+add_library(
+        native-lib
+        SHARED
+        native-lib.cpp)
+
+find_library(
+        log-lib
+        log)
+
+target_link_libraries(
+        native-lib
+        ${log-lib})
+
+# Required for 16 KB page size compatibility (Android 15+ / Google Play policy Nov 2025)
+target_link_options(native-lib PRIVATE -Wl,-z,max-page-size=16384)
