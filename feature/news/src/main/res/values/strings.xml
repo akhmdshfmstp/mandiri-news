@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_categories">News Categories</string>
+    <string name="title_sources">News Sources</string>
+    <string name="title_articles">Articles</string>
+    <string name="hint_search_sources">Search sources…</string>
+    <string name="hint_search_articles">Search articles…</string>
+    <string name="label_retry">Retry</string>
+    <string name="msg_empty_sources">No sources found</string>
+    <string name="msg_empty_articles">No articles found</string>
+    <string name="msg_error_generic">Something went wrong</string>
+    <string name="msg_no_internet">No internet connection</string>
+    <string name="content_description_thumbnail">Article thumbnail</string>
+</resources>
