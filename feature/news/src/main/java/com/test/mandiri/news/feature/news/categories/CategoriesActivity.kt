@@ -9,6 +9,7 @@ import com.test.mandiri.news.core.router.api.Router
 import com.test.mandiri.news.core.router.impl.navigate
 import com.test.mandiri.news.feature.news.databinding.ActivityCategoriesBinding
 import com.test.mandiri.news.feature.news.sources.SourcesActivity
+import com.test.mandiri.news.feature.news.sources.SourcesRouteHandler
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -25,7 +26,7 @@ class CategoriesActivity : BaseActivity<ActivityCategoriesBinding>() {
     private val adapter = CategoriesAdapter { category ->
         router.navigate(
             context = this,
-            path = "/news/sources",
+            path = SourcesRouteHandler.PATH,
             query = mapOf(
                 SourcesActivity.EXTRA_CATEGORY_ID to category.id,
                 SourcesActivity.EXTRA_CATEGORY_NAME to category.displayName,
